@@ -1,0 +1,26 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  name?: string;
+  alt: string;
+  class?: string;
+  width?: number;
+  loading?: 'lazy' | 'eager';
+  initials?: string;
+  hideIfMissing?: boolean;
+}
+
+const { name = '', alt, class: cls = '', width = 900, loading = 'lazy', initials = '', hideIfMissing = false } = Astro.props;
+const files = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/images/**/*.{jpg,jpeg,png,webp,JPG,JPEG,PNG}',
+  { eager: true },
+);
+const wanted = `/src/assets/images/${name.replace(/\.[^.]+$/, '')}`;
+const hit = name ? Object.entries(files).find(([key]) => key.replace(/\.[^.]+$/, '') === wanted) : undefined;
+---
+{hit ? (
+  <Image src={hit[1].default} alt={alt} width={width} class={cls} loading={loading} />
+) : hideIfMissing ? null : (
+  <div class:list={['ph', cls]} role="img" aria-label={alt}><span>{initials}</span></div>
+)}

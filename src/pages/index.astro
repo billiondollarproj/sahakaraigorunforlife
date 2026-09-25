@@ -1,0 +1,39 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Pic from '../components/Pic.astro';
+import placements from '../data/placements.json';
+
+const posts = (await getCollection('blog')).sort((a, b) => a.data.order - b.data.order).slice(0, 3);
+const problems = [
+  ['Language barrier', 'Most digital government tools work only in English or Hindi, leaving out members who speak regional languages.'],
+  ['Literacy and access barrier', 'App-based tools assume a smartphone and comfort with digital tools. Many PACS members have neither.'],
+  ['Process delay', 'Scheme applications, KCC processing and legal queries need several visits, paperwork and available staff.'],
+];
+const capabilities = [
+  ['Speak in your language', 'Voice input and spoken answers through Bhashini, the government speech service.'],
+  ['Tap to identify', 'An NFC or RFID tap, or a PACS ID lookup, brings up the member instantly.'],
+  ['Answers from verified documents', 'A local retrieval pipeline answers from PACS bylaws, KCC rules and scheme guidelines.'],
+  ['Forms filled from the conversation', 'KCC and scheme application forms on the PACS admin portal are filled automatically.'],
+  ['A receipt to take away', 'A printed slip with a unique application ID and QR code.'],
+  ['Keeps working offline', 'A cached knowledge base covers internet outages and syncs when the connection returns.'],
+];
+const steps = [['Tap your ID', 'NFC card or PACS ID'], ['Speak', 'Ask in your own language'], ['Get your answer', 'Spoken and on screen'], ['Take your receipt', 'Application ID and QR code']];
+---
+<Base title="SAHAKAR AI">
+  <section class="hero" data-hero>
+    <div class="wrap">
+      <div>
+        <p class="meta"><span class="tag">Team Mitras</span>Smart India Hackathon 2026</p>
+        <h1>Government services in the member's own language.</h1>
+        <p class="lead">SAHAKAR AI is a voice-first kiosk for PACS branches. A member taps an ID, speaks, and leaves with an answer and a printed receipt, without needing a smartphone or English.</p>
+        <div class="actions"><a class="btn primary" href="/blog/">Read the blog</a><a class="btn ghost" href="/about/">Meet the team</a></div>
+      </div>
+      <div class="hero-art"><Pic name={placements.hero} alt="Palm-lined outdoor surroundings near a cooperative-site visit" width={1100} loading="eager" hideIfMissing /></div>
+    </div>
+  </section>
+  <section class="section"><div class="wrap"><h2>Why PACS members are left waiting</h2><p class="intro">Primary Agricultural Cooperative Societies serve rural members, but access to schemes, Kisan Credit Card benefits and legal guidance still depends on staff and paperwork.</p><div class="cols">{problems.map(([title, detail]) => <div><h3>{title}</h3><p>{detail}</p></div>)}</div></div></section>
+  <section class="section"><div class="wrap"><h2>What the kiosk does</h2><dl class="caps">{capabilities.map(([title, detail]) => <div><dt>{title}</dt><dd>{detail}</dd></div>)}</dl></div></section>
+  <section class="section"><div class="wrap"><h2>A visit, start to finish</h2><ol class="steps" data-stagger>{steps.map(([title, detail]) => <li><strong>{title}</strong><span>{detail}</span></li>)}</ol></div></section>
+  <section class="section"><div class="wrap"><h2>From the blog</h2><ul class="posts">{posts.map((post) => <li><a class="row" href={`/blog/${post.id}/`}><span class="part">Part {post.data.part}</span><span><h3>{post.data.title}</h3><p>{post.data.summary}</p></span></a></li>)}</ul><div class="actions"><a class="btn ghost" href="/blog/">All posts</a></div></div></section>
+</Base>

@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+import Pic from '../components/Pic.astro';
+import { team } from '../data/team';
+import placements from '../data/placements.json';
+
+const initials = (name: string) => name.split(' ').map((word) => word[0]).slice(0, 2).join('');
+const gallery = placements.gallery;
+---
+<Base title="About us" description="Team Mitras, Rathinam Global University: the students building SAHAKAR AI for Smart India Hackathon 2026.">
+  <div class="wrap page-head">
+    <h1>About us</h1>
+    <p class="lead">We are Team Mitras, students at Rathinam Global University. We are building SAHAKAR AI so a PACS member can get scheme, KCC and legal help in their own language, at the branch, in one visit.</p>
+    <div class="facts"><span><b>Event</b> Smart India Hackathon 2026</span><span><b>Problem statement</b> PS26088</span><span><b>Ministry</b> Cooperation (NCCT)</span></div>
+    <div class="group-photo"><Pic name={placements.about} alt="Team Mitras together" width={1400} hideIfMissing /></div>
+  </div>
+  <section class="section"><div class="wrap"><h2>The team</h2><ul class="team" data-stagger>{team.map((member) => <li><Pic name={placements.team[member.id as keyof typeof placements.team]} alt={`Photo of ${member.name}`} width={600} initials={initials(member.name)} /><h3>{member.name}</h3>{member.role && <p class="role">{member.role}</p>}<p>{member.stream}, {member.year}</p>{member.bio && <p>{member.bio}</p>}</li>)}</ul></div></section>
+  {gallery.length > 0 && <section class="section"><div class="wrap"><h2>Along the way</h2><ul class="gallery">{gallery.map((item) => <li><figure style="margin:0"><Pic name={item.file} alt={item.alt} width={700} hideIfMissing /><figcaption>{item.caption}</figcaption></figure></li>)}</ul></div></section>}
+</Base>

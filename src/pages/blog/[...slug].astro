@@ -1,0 +1,23 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Pic from '../../components/Pic.astro';
+import placements from '../../data/placements.json';
+
+export async function getStaticPaths() {
+  const posts = (await getCollection('blog')).sort((a, b) => a.data.order - b.data.order);
+  return posts.map((post, index) => ({ params: { slug: post.id }, props: { post, prev: posts[index - 1], next: posts[index + 1] } }));
+}
+const { post, prev, next } = Astro.props;
+const { Content, headings } = await render(post);
+const toc = headings.filter((heading) => heading.depth === 2);
+const minutes = Math.max(1, Math.round((post.body ?? '').split(/\s+/).length / 200));
+const cover = placements.posts[post.id as keyof typeof placements.posts];
+const date = post.data.date.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+<Base title={post.data.title} description={post.data.summary}>
+  <header class="post-head"><p class="meta"><span class="tag">{post.data.tag}</span>Part {post.data.part}, {date}, {minutes} min read</p><h1>{post.data.title}</h1><p class="lead">{post.data.summary}</p></header>
+  {cover && <div class="post-cover"><Pic name={cover} alt={post.data.title} width={1400} loading="eager" hideIfMissing /></div>}
+  <div class="post-body"><article class="prose"><Content /></article>{toc.length > 0 && <aside class="toc" aria-label="On this page"><b>On this page</b>{toc.map((heading) => <a href={`#${heading.slug}`}>{heading.text}</a>)}</aside>}</div>
+  <nav class="pager" aria-label="More posts">{prev ? <a href={`/blog/${prev.id}/`}><small>Previous</small>{prev.data.title}</a> : <span></span>}{next ? <a class="next" href={`/blog/${next.id}/`}><small>Next</small>{next.data.title}</a> : <span></span>}</nav>
+</Base>

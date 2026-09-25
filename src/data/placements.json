@@ -1,0 +1,36 @@
+{
+  "hero": "WhatsApp Image 2026-09-24 at 1.21.13 PM (2).jpeg",
+  "about": "",
+  "team": {
+    "mithun": "team/team-mithun",
+    "nizamudeen": "team/team-nizamudeen",
+    "kishor": "team/team-kishor",
+    "pesalayel": "team/team-pesalayel",
+    "kanishka": "team/team-kanishka",
+    "sakthi": "team/team-sakthi"
+  },
+  "posts": {
+    "the-problem": "WhatsApp Image 2026-09-24 at 1.21.14 PM (2).jpeg",
+    "introducing-sahakar-ai": "WhatsApp Image 2026-09-24 at 1.21.20 PM (2).jpeg",
+    "how-we-are-building": "WhatsApp Image 2026-09-24 at 1.21.21 PM (1).jpeg",
+    "hardware-kiosk": "WhatsApp Image 2026-09-24 at 1.21.25 PM (1).jpeg",
+    "software-voice-rag": "WhatsApp Image 2026-09-24 at 1.21.14 PM (1).jpeg"
+  },
+  "gallery": [
+    {
+      "file": "WhatsApp Image 2026-09-24 at 1.21.13 PM.jpeg",
+      "alt": "Team members outside near a cooperative-site entrance",
+      "caption": "Team Mitras during the cooperative-site visit."
+    },
+    {
+      "file": "WhatsApp Image 2026-09-24 at 1.21.16 PM (1).jpeg",
+      "alt": "Team members discussing records around a table",
+      "caption": "Discussing records and member needs."
+    },
+    {
+      "file": "WhatsApp Image 2026-09-24 at 1.21.18 PM (1).jpeg",
+      "alt": "Person reading a wall notice inside the cooperative-site building",
+      "caption": "Observing information available at the site."
+    }
+  ]
+}
