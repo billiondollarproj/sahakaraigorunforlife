@@ -255,7 +255,7 @@
     resize();
 
     const update = (time: number) => {
-      if (time - lastRender < 1000 / 30) return;
+      if (time - lastRender < 1 / 30) return;
       lastRender = time;
       const slide = slides[activeIndex < 0 ? 0 : activeIndex];
       opacity.exploded += (Number(slide.exploded) - opacity.exploded) * smoothing;
