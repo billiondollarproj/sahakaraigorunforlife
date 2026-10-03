@@ -1,12 +1,12 @@
 ---
-title: "Introducing SAHAKAR AI: a voice-first kiosk for PACS"
+title: "Introducing BHUTRANA, a voice-first kiosk for PACS"
 summary: "A member taps an ID, speaks in their own language, and leaves with an answer and a printed receipt."
 part: "2"
 order: 2
 tag: "Product"
 date: 2026-09-24
 ---
-SAHAKAR AI is a physical, voice-first assistant placed directly at a PACS branch. A member walks up, taps an ID, speaks in their own language, and walks away with an answer and a printed proof of the interaction.
+BHUTRANA is a physical, voice-first assistant planned for PACS branches. A member walks up, taps an ID, speaks in their own language, and walks away with an answer and a printed proof of the interaction.
 
 ## A visit, start to finish
 
@@ -26,6 +26,6 @@ SAHAKAR AI is a physical, voice-first assistant placed directly at a PACS branch
 
 ## How it differs
 
-Existing digital tools are built for people with smartphones. SAHAKAR AI is built for the person standing at the counter: it needs no phone, asks for little literacy, gives instant identification, and leaves a physical receipt.
+Existing digital tools are built for people with smartphones. BHUTRANA is designed for the person standing at the counter: it needs no phone, asks for little literacy, provides identity-linked access, and leaves a physical receipt.
 
-<!-- TODO: add the sourced efficiency comparison (manual process days versus SAHAKAR AI minutes) once available. -->
+<!-- TODO: add the sourced efficiency comparison (manual process days versus BHUTRANA minutes) once available. -->

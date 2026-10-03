@@ -4,6 +4,6 @@ import Base from '../../layouts/Base.astro';
 const posts = (await getCollection('blog')).sort((a, b) => a.data.order - b.data.order);
 const minutes = (body = '') => Math.max(1, Math.round(body.split(/\s+/).length / 200));
 ---
-<Base title="Blog" description="Notes from Team Mitras on the problem, the design and the build of SAHAKAR AI.">
-  <div class="wrap page-head"><h1>Blog</h1><p class="lead">The problem we are solving and how we are building SAHAKAR AI, in reading order.</p><ul class="posts">{posts.map((post) => <li><a class="row" href={`/blog/${post.id}/`}><span class="part">Part {post.data.part}</span><span><h3>{post.data.title}</h3><p>{post.data.summary}</p><span class="meta"><span class="tag">{post.data.tag}</span>{minutes(post.body)} min read</span></span></a></li>)}</ul></div>
+<Base title="Blog" description="Notes from Team Mitras on the problem, design and build of BHUTRANA.">
+  <div class="wrap page-head"><h1>Blog</h1><p class="lead">The problem we are solving and how we are building BHUTRANA, in reading order.</p><ul class="posts">{posts.map((post) => <li><a class="row" href={`/blog/${post.id}/`}><span class="part">Part {post.data.part}</span><span><h3>{post.data.title}</h3><p>{post.data.summary}</p><span class="meta"><span class="tag">{post.data.tag}</span>{minutes(post.body)} min read</span></span></a></li>)}</ul></div>
 </Base>

@@ -1,4 +1,4 @@
-# SAHAKAR AI blog: all code in one place
+# BHUTRANA AI blog: all code in one place
 
 Create each file at the path shown, then follow the README section first. Folder to create: `src/assets/images/team/` (put photos there).
 
@@ -6,7 +6,7 @@ Create each file at the path shown, then follow the README section first. Folder
 ## `README.md`
 
 ```markdown
-# SAHAKAR AI blog (Team Mitras)
+# BHUTRANA AI blog (Team Mitras)
 
 Astro 5 + plain CSS + GSAP. No emojis, no invented content.
 
@@ -176,7 +176,7 @@ import '../styles/global.css';
 interface Props { title: string; description?: string }
 const {
   title,
-  description = 'SAHAKAR AI is a voice-first kiosk that helps PACS members get scheme, KCC and legal information in their own language.',
+  description = 'BHUTRANA AI is a voice-first kiosk that helps PACS members get scheme, KCC and legal information in their own language.',
 } = Astro.props;
 
 const path = Astro.url.pathname;
@@ -186,7 +186,7 @@ const nav = [
   { href: '/blog/', label: 'Blog' },
 ];
 const active = (h: string) => (h === '/' ? path === '/' : path.startsWith(h));
-const fullTitle = title === 'SAHAKAR AI' ? title : `${title} | SAHAKAR AI`;
+const fullTitle = title === 'BHUTRANA AI' ? title : `${title} | BHUTRANA AI`;
 const canonical = new URL(path, Astro.site);
 ---
 <!doctype html>
@@ -211,7 +211,7 @@ const canonical = new URL(path, Astro.site);
     <a class="skip" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="wrap bar">
-        <a class="brand" href="/">SAHAKAR AI</a>
+        <a class="brand" href="/">BHUTRANA AI</a>
         <nav aria-label="Main">
           {nav.map((n) => (
             <a href={n.href} aria-current={active(n.href) ? 'page' : undefined}>{n.label}</a>
@@ -434,18 +434,18 @@ const steps = [
   ['Take your receipt', 'Application ID and QR code'],
 ];
 ---
-<Base title="SAHAKAR AI">
+<Base title="BHUTRANA AI">
   <section class="hero" data-hero>
     <div class="wrap">
       <div>
         <h1>Government services in the member's own language.</h1>
-        <p class="lead">SAHAKAR AI is a voice-first kiosk for PACS branches. A member taps an ID, speaks, and leaves with an answer and a printed receipt, without needing a smartphone or English.</p>
+        <p class="lead">BHUTRANA AI is a voice-first kiosk for PACS branches. A member taps an ID, speaks, and leaves with an answer and a printed receipt, without needing a smartphone or English.</p>
         <div class="actions">
           <a class="btn primary" href="/blog/">Read the blog</a>
           <a class="btn ghost" href="/about/">Meet the team</a>
         </div>
       </div>
-      <div class="hero-art"><Pic name={placements.hero} alt="The SAHAKAR AI kiosk" width={1100} loading="eager" hideIfMissing /></div>
+      <div class="hero-art"><Pic name={placements.hero} alt="The BHUTRANA AI kiosk" width={1100} loading="eager" hideIfMissing /></div>
     </div>
   </section>
 
@@ -507,10 +507,10 @@ import placements from '../data/placements.json';
 const initials = (n: string) => n.split(' ').map((w) => w[0]).slice(0, 2).join('');
 const gallery = placements.gallery as { file: string; alt: string; caption?: string }[];
 ---
-<Base title="About us" description="Team Mitras, Rathinam Global University: the students building SAHAKAR AI for Smart India Hackathon 2026.">
+<Base title="About us" description="Team Mitras, Rathinam Global University: the students building BHUTRANA AI for Smart India Hackathon 2026.">
   <div class="wrap page-head">
     <h1>About us</h1>
-    <p class="lead">We are Team Mitras, students at Rathinam Global University. We are building SAHAKAR AI so a PACS member can get scheme, KCC and legal help in their own language, at the branch, in one visit.</p>
+    <p class="lead">We are Team Mitras, students at Rathinam Global University. We are building BHUTRANA AI so a PACS member can get scheme, KCC and legal help in their own language, at the branch, in one visit.</p>
     <div class="facts">
       <span><b>Event</b> Smart India Hackathon 2026</span>
       <span><b>Problem statement</b> PS26088</span>
@@ -562,10 +562,10 @@ import Base from '../../layouts/Base.astro';
 const posts = (await getCollection('blog')).sort((a, b) => a.data.order - b.data.order);
 const minutes = (body = '') => Math.max(1, Math.round(body.split(/\s+/).length / 200));
 ---
-<Base title="Blog" description="Notes from Team Mitras on the problem, the design and the build of SAHAKAR AI.">
+<Base title="Blog" description="Notes from Team Mitras on the problem, the design and the build of BHUTRANA AI.">
   <div class="wrap page-head">
     <h1>Blog</h1>
-    <p class="lead">The problem we are solving and how we are building SAHAKAR AI, in reading order.</p>
+    <p class="lead">The problem we are solving and how we are building BHUTRANA AI, in reading order.</p>
     <ul class="posts">
       {posts.map((p) => (
         <li><a class="row" href={`/blog/${p.id}/`}>
@@ -636,7 +636,7 @@ const date = post.data.date.toLocaleDateString('en-IN', { day: 'numeric', month:
 ```markdown
 ---
 title: "The hardware: kiosk, identity tap and receipt printer"
-summary: "What is inside the SAHAKAR AI kiosk and why each part is there."
+summary: "What is inside the BHUTRANA AI kiosk and why each part is there."
 part: "3.1"
 order: 4
 tag: "Hardware"
@@ -667,14 +667,14 @@ The prototype is being built on a laptop first. Hardware integration follows, an
 
 ```markdown
 ---
-title: "How we are building SAHAKAR AI"
+title: "How we are building BHUTRANA AI"
 summary: "The hardware, software and data choices behind the kiosk, and where the project stands."
 part: "3"
 order: 3
 tag: "Build"
 date: 2026-09-24
 ---
-Every part of SAHAKAR AI uses technology that is already in production elsewhere in India: Bhashini for speech, Raspberry Pi kiosks, NFC and RFID identification, and thermal printing. We are integrating proven parts rather than inventing new ones.
+Every part of BHUTRANA AI uses technology that is already in production elsewhere in India: Bhashini for speech, Raspberry Pi kiosks, NFC and RFID identification, and thermal printing. We are integrating proven parts rather than inventing new ones.
 
 ## The three layers
 
@@ -690,7 +690,7 @@ Because answers come from a shared document set, updating that set updates every
 
 ## Where we are
 
-SAHAKAR AI is a Smart India Hackathon 2026 project by Team Mitras. We are building the working prototype on a laptop first and moving to Raspberry Pi hardware afterwards. Our first demo languages are Hindi, Tamil and English.
+BHUTRANA AI is a Smart India Hackathon 2026 project by Team Mitras. We are building the working prototype on a laptop first and moving to Raspberry Pi hardware afterwards. Our first demo languages are Hindi, Tamil and English.
 
 ## Roadmap
 
@@ -702,14 +702,14 @@ Today the prototype can use an API-based language model. The goal is fully local
 
 ```markdown
 ---
-title: "Introducing SAHAKAR AI: a voice-first kiosk for PACS"
+title: "Introducing BHUTRANA AI: a voice-first kiosk for PACS"
 summary: "A member taps an ID, speaks in their own language, and leaves with an answer and a printed receipt."
 part: "2"
 order: 2
 tag: "Product"
 date: 2026-09-24
 ---
-SAHAKAR AI is a physical, voice-first assistant placed directly at a PACS branch. A member walks up, taps an ID, speaks in their own language, and walks away with the query resolved and a printed proof of the transaction. Routine queries need no smartphone, no English or Hindi, and no staff member.
+BHUTRANA AI is a physical, voice-first assistant placed directly at a PACS branch. A member walks up, taps an ID, speaks in their own language, and walks away with the query resolved and a printed proof of the transaction. Routine queries need no smartphone, no English or Hindi, and no staff member.
 
 ## A visit, start to finish
 
@@ -729,9 +729,9 @@ SAHAKAR AI is a physical, voice-first assistant placed directly at a PACS branch
 
 ## How it differs
 
-Existing digital tools are built for people with smartphones. SAHAKAR AI is built for the person standing at the counter: it needs no phone, asks for little literacy, gives instant identification, and leaves a physical receipt.
+Existing digital tools are built for people with smartphones. BHUTRANA AI is built for the person standing at the counter: it needs no phone, asks for little literacy, gives instant identification, and leaves a physical receipt.
 
-<!-- TODO: add the measured comparison (manual process takes X days, SAHAKAR AI resolves it in Y minutes) once you have a sourced number. -->
+<!-- TODO: add the measured comparison (manual process takes X days, BHUTRANA AI resolves it in Y minutes) once you have a sourced number. -->
 ```
 
 

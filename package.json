@@ -1,5 +1,5 @@
 {
-  "name": "sahakar-ai-blog",
+  "name": "bhutrana-blog",
   "type": "module",
   "version": "1.0.0",
   "scripts": {
@@ -10,6 +10,7 @@
   "dependencies": {
     "@astrojs/sitemap": "^3.2.0",
     "astro": "^5.0.0",
-    "gsap": "^3.12.5"
+    "gsap": "^3.12.5",
+    "three": "^0.180.0"
   }
 }

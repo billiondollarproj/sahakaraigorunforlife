@@ -20,4 +20,4 @@ Primary Agricultural Cooperative Societies (PACS) and other cooperative institut
 
 The issue is not that members lack interest in schemes. The issue is that the path to a correct answer is difficult to access. A member should be able to ask a question in the language they use every day, understand the answer, and leave with a clear next step.
 
-That is the gap SAHAKAR AI is designed to address.
+That is the gap BHUTRANA is designed to address.

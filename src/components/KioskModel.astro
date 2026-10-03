@@ -1,0 +1,333 @@
+<section class="kiosk-walkthrough" data-kiosk-walkthrough aria-label="Interactive kiosk walkthrough">
+  <div class="kiosk-pin">
+    <div class="kiosk-viewport">
+      <div class="kiosk-canvas-wrap" data-kiosk-view>
+        <canvas data-kiosk-canvas aria-label="Three-dimensional exploded BHUTRANA kiosk model. Scroll to inspect individual components."></canvas>
+        <span class="kiosk-label" data-kiosk-label aria-hidden="true"></span>
+        <p class="kiosk-scroll-hint">Scroll to explore each component</p>
+      </div>
+      <div class="kiosk-caption" data-kiosk-caption aria-live="polite">
+        <p class="kiosk-eyebrow"></p>
+        <h2></h2>
+        <p class="kiosk-description"></p>
+        <code></code>
+        <div class="kiosk-progress" data-kiosk-progress aria-label="Walkthrough progress"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import * as THREE from 'three';
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const slides = [
+    { eyebrow: 'Overview', title: 'One kiosk, one visit', description: 'A member taps an ID, speaks in their own language and leaves with an answer and a printed receipt. Scroll to see the planned kiosk come apart.', detail: 'Tap · Speak · Answer · Receipt', exploded: false, focus: null },
+    { eyebrow: 'Inside', title: 'Standard parts, one small computer', description: 'The design brings familiar hardware modules together around a Raspberry Pi. The prototype is being built on a laptop first.', detail: 'Planned hardware assembly', exploded: true, focus: null },
+    { eyebrow: 'Display', title: 'Touchscreen', description: 'The member can see an answer as well as hear it. The interface is planned with large touch targets, a language selector and a microphone control.', detail: 'Kiosk interface: HTML, CSS and JavaScript', exploded: true, focus: ['screen'] },
+    { eyebrow: 'Controller', title: 'Raspberry Pi', description: 'The planned controller connects the kiosk interface, voice flow and local retrieval. Prototype work starts on a laptop before Raspberry Pi integration.', detail: 'Raspberry Pi hardware is planned', exploded: true, focus: ['pi'] },
+    { eyebrow: 'Voice', title: 'Microphone and speaker', description: 'A microphone captures a member’s question; Bhashini is planned for speech recognition and spoken responses in the first demo languages.', detail: 'Bhashini · Hindi · Tamil · English', exploded: true, focus: ['mic', 'speaker'] },
+    { eyebrow: 'Identity', title: 'NFC / RFID reader', description: 'A card tap or PACS ID lookup is intended to connect a member to the relevant service without a phone-based login.', detail: 'NFC / RFID tap or PACS ID lookup', exploded: true, focus: ['nfc'] },
+    { eyebrow: 'Output', title: 'Thermal printer', description: 'The planned receipt provides a take-away record with an application ID and QR code.', detail: 'Receipt · Application ID · QR code', exploded: true, focus: ['printer'] },
+    { eyebrow: 'Together', title: 'How a visit runs', description: 'Answers are planned to use verified source documents. A cached knowledge base is part of the offline fallback design.', detail: 'Tap → Speak → Retrieve → Respond → Print', exploded: false, focus: null },
+  ];
+
+  const walkthroughs = document.querySelectorAll<HTMLElement>('[data-kiosk-walkthrough]:not([data-kiosk-ready])');
+
+  walkthroughs.forEach((walkthrough) => {
+    const canvas = walkthrough.querySelector<HTMLCanvasElement>('[data-kiosk-canvas]');
+    const view = walkthrough.querySelector<HTMLElement>('[data-kiosk-view]');
+    const label = walkthrough.querySelector<HTMLElement>('[data-kiosk-label]');
+    const caption = walkthrough.querySelector<HTMLElement>('[data-kiosk-caption]');
+    const progress = walkthrough.querySelector<HTMLElement>('[data-kiosk-progress]');
+    if (!canvas || !view || !label || !caption || !progress) return;
+
+    const eyebrow = caption.querySelector<HTMLElement>('.kiosk-eyebrow');
+    const heading = caption.querySelector<HTMLHeadingElement>('h2');
+    const description = caption.querySelector<HTMLElement>('.kiosk-description');
+    const detail = caption.querySelector<HTMLElement>('code');
+    if (!eyebrow || !heading || !description || !detail) return;
+
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    } catch (error) {
+      const message = document.createElement('p');
+      message.className = 'kiosk-fallback';
+      message.setAttribute('role', 'status');
+      message.textContent = 'The interactive 3D model is unavailable in this browser. The component walkthrough remains available.';
+      view.append(message);
+      console.error('Unable to initialize the BHUTRANA kiosk model.', error);
+      return;
+    }
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.08;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 60);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x7b8a84, 1.2));
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.65);
+    keyLight.position.set(4, 8, 6);
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.set(512, 512);
+    Object.assign(keyLight.shadow.camera, { left: -7, right: 7, top: 7, bottom: -7 });
+    scene.add(keyLight);
+    const fillLight = new THREE.DirectionalLight(0xd9e9e1, 0.75);
+    fillLight.position.set(-5, 3, -4);
+    scene.add(fillLight);
+
+    const floor = new THREE.Mesh(
+      new THREE.PlaneGeometry(40, 40),
+      new THREE.ShadowMaterial({ opacity: 0.16 }),
+    );
+    floor.rotation.x = -Math.PI / 2;
+    floor.receiveShadow = true;
+    scene.add(floor);
+
+    const partNames = ['body', 'screen', 'mic', 'nfc', 'speaker', 'printer', 'pi'] as const;
+    type PartName = typeof partNames[number];
+    const parts = {} as Record<PartName, { group: THREE.Group; materials: THREE.Material[] }>;
+    partNames.forEach((name) => {
+      parts[name] = { group: new THREE.Group(), materials: [] };
+      scene.add(parts[name].group);
+    });
+
+    const material = (part: PartName, color: THREE.ColorRepresentation, metalness = 0.4, roughness = 0.48, options: THREE.MeshStandardMaterialParameters = {}) => {
+      const result = new THREE.MeshStandardMaterial({ color, metalness, roughness, transparent: true, ...options });
+      parts[part].materials.push(result);
+      return result;
+    };
+    const addMesh = (part: PartName, geometry: THREE.BufferGeometry, surface: THREE.Material, x = 0, y = 0, z = 0) => {
+      const mesh = new THREE.Mesh(geometry, surface);
+      mesh.position.set(x, y, z);
+      mesh.castShadow = true;
+      parts[part].group.add(mesh);
+      return mesh;
+    };
+    const box = (width: number, height: number, depth: number) => new THREE.BoxGeometry(width, height, depth);
+
+    const screenTextureCanvas = document.createElement('canvas');
+    screenTextureCanvas.width = 840;
+    screenTextureCanvas.height = 520;
+    const context = screenTextureCanvas.getContext('2d');
+    if (context) {
+      const background = context.createLinearGradient(0, 0, 0, 520);
+      background.addColorStop(0, '#edf6f1');
+      background.addColorStop(1, '#d7e9df');
+      context.fillStyle = background;
+      context.fillRect(0, 0, 840, 520);
+      context.fillStyle = '#0f6b4b';
+      context.fillRect(0, 0, 840, 70);
+      context.fillStyle = '#ffffff';
+      context.font = '600 34px sans-serif';
+      context.fillText('BHUTRANA', 28, 47);
+      context.fillStyle = '#17212b';
+      context.font = '600 40px sans-serif';
+      context.fillText('How can I help you?', 40, 160);
+      ['Loan / KCC', 'Schemes', 'Society rules'].forEach((text, index) => {
+        context.fillStyle = '#ffffff';
+        context.fillRect(40 + index * 260, 200, 240, 110);
+        context.fillStyle = '#0f6b4b';
+        context.font = '600 28px sans-serif';
+        context.fillText(text, 58 + index * 260, 262);
+      });
+      context.fillStyle = '#0f6b4b';
+      context.beginPath();
+      context.arc(420, 415, 52, 0, Math.PI * 2);
+      context.fill();
+      context.fillStyle = '#ffffff';
+      context.fillRect(408, 388, 24, 40);
+      context.fillStyle = '#566472';
+      context.font = '24px sans-serif';
+      context.fillText('Hindi  |  Tamil  |  English', 270, 500);
+    }
+    const screenTexture = new THREE.CanvasTexture(screenTextureCanvas);
+    screenTexture.colorSpace = THREE.SRGBColorSpace;
+
+    addMesh('body', box(1.7, 2.4, 1), material('body', 0x34423b, 0.48, 0.42), 0, 1.3, 0);
+    addMesh('body', box(2.5, 0.12, 1.6), material('body', 0x202a25, 0.45, 0.44), 0, 0.06, 0);
+    addMesh('body', box(0.6, 0.5, 0.4), material('body', 0x29342e), 0, 2.55, -0.05);
+
+    addMesh('screen', box(2.3, 1.5, 0.14), material('screen', 0x18231e, 0.48, 0.36));
+    const display = material('screen', 0xffffff, 0, 0.28, { map: screenTexture, emissive: 0xffffff, emissiveMap: screenTexture, emissiveIntensity: 0.5 });
+    const panel = addMesh('screen', new THREE.PlaneGeometry(2.1, 1.3), display, 0, 0, 0.075);
+    panel.castShadow = false;
+    parts.screen.group.rotation.x = -0.1;
+
+    addMesh('mic', box(0.8, 0.1, 0.12), material('mic', 0x1b2520, 0.52, 0.36));
+    const micMaterial = material('mic', 0x111714, 0.2, 0.6);
+    for (let index = 0; index < 4; index += 1) {
+      const port = addMesh('mic', new THREE.CylinderGeometry(0.025, 0.025, 0.02, 12), micMaterial, -0.27 + index * 0.18, 0, 0.065);
+      port.rotation.x = Math.PI / 2;
+    }
+
+    addMesh('nfc', box(0.75, 0.05, 0.55), material('nfc', 0x27352d, 0.38, 0.5));
+    const readerRing = addMesh('nfc', new THREE.TorusGeometry(0.16, 0.014, 8, 40), material('nfc', 0x4b8c6c, 0.16, 0.42), 0, 0.03, 0);
+    readerRing.rotation.x = Math.PI / 2;
+    parts.nfc.group.rotation.x = -0.5;
+
+    const speaker = addMesh('speaker', new THREE.CylinderGeometry(0.24, 0.24, 0.06, 32), material('speaker', 0x26312b, 0.4, 0.55));
+    speaker.rotation.x = Math.PI / 2;
+    const speakerRing = addMesh('speaker', new THREE.TorusGeometry(0.22, 0.02, 8, 32), material('speaker', 0x84948a, 0.55, 0.36), 0, 0, 0.03);
+    speakerRing.rotation.x = Math.PI / 2;
+
+    addMesh('printer', box(1.15, 0.42, 0.16), material('printer', 0x27312c, 0.4, 0.48));
+    addMesh('printer', box(0.95, 0.04, 0.02), material('printer', 0x121815, 0.24, 0.55), 0, -0.02, 0.081);
+    addMesh('printer', box(0.5, 0.34, 0.01), material('printer', 0xfffefa, 0, 0.88), 0, -0.24, 0.05);
+
+    addMesh('pi', box(0.95, 0.04, 0.62), material('pi', 0x438267, 0.28, 0.56));
+    addMesh('pi', box(0.28, 0.05, 0.28), material('pi', 0x222a26, 0.55, 0.38), -0.05, 0.045, 0);
+    [-0.12, 0.12].forEach((z) => addMesh('pi', box(0.14, 0.1, 0.14), material('pi', 0xc4cec8, 0.72, 0.35), 0.42, 0.06, z));
+    parts.pi.group.rotation.x = Math.PI / 2;
+
+    const assembled: Record<PartName, THREE.Vector3> = {
+      body: new THREE.Vector3(0, 0, 0),
+      screen: new THREE.Vector3(0, 3.15, 0.15),
+      mic: new THREE.Vector3(0, 4.02, 0.1),
+      nfc: new THREE.Vector3(-0.4, 1.98, 0.56),
+      speaker: new THREE.Vector3(0.52, 1.98, 0.53),
+      printer: new THREE.Vector3(0, 1.2, 0.56),
+      pi: new THREE.Vector3(0, 1.3, 0),
+    };
+    const exploded: Record<PartName, THREE.Vector3> = {
+      body: new THREE.Vector3(0, 0, 0),
+      screen: new THREE.Vector3(-2.3, 3.5, 0.8),
+      mic: new THREE.Vector3(0, 5, 0.5),
+      nfc: new THREE.Vector3(-2.7, 1.7, 1.2),
+      speaker: new THREE.Vector3(2.5, 2, 1),
+      printer: new THREE.Vector3(2.5, 0.75, 1.3),
+      pi: new THREE.Vector3(2.5, 3.5, 0.4),
+    };
+    const opacity = { exploded: 0, body: 1, screen: 1, mic: 1, nfc: 1, speaker: 1, printer: 1, pi: 0 };
+    const dots = slides.map((_, index) => {
+      const dot = document.createElement('span');
+      dot.className = 'kiosk-progress-dot';
+      dot.setAttribute('aria-hidden', 'true');
+      progress.append(dot);
+      return dot;
+    });
+
+    let activeIndex = -1;
+    let scrollProgress = 0;
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const smoothing = reducedMotion ? 1 : 0.09;
+    const projected = new THREE.Vector3();
+    let lastRender = 0;
+
+    const showSlide = (index: number) => {
+      if (index === activeIndex) return;
+      activeIndex = index;
+      const slide = slides[index];
+      eyebrow.textContent = slide.eyebrow;
+      heading.textContent = slide.title;
+      description.textContent = slide.description;
+      detail.textContent = slide.detail;
+      dots.forEach((dot, dotIndex) => dot.classList.toggle('is-active', dotIndex <= index));
+      caption.setAttribute('aria-label', `Step ${index + 1} of ${slides.length}: ${slide.title}`);
+      if (!reducedMotion) {
+        gsap.fromTo(
+          [eyebrow, heading, description, detail],
+          { opacity: 0, y: 8 },
+          { opacity: 1, y: 0, duration: 0.32, stagger: 0.035, overwrite: true },
+        );
+      }
+    };
+    showSlide(0);
+
+    const resize = () => {
+      const width = view.clientWidth;
+      const height = view.clientHeight;
+      if (!width || !height) return;
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    };
+    const resizeObserver = new ResizeObserver(resize);
+    resizeObserver.observe(view);
+    resize();
+
+    const update = (time: number) => {
+      if (time - lastRender < 1000 / 30) return;
+      lastRender = time;
+      const slide = slides[activeIndex < 0 ? 0 : activeIndex];
+      opacity.exploded += (Number(slide.exploded) - opacity.exploded) * smoothing;
+
+      partNames.forEach((name) => {
+        const selected = !slide.focus || slide.focus.includes(name);
+        const target = name === 'body'
+          ? slide.exploded ? 0.2 : 1
+          : name === 'pi'
+            ? slide.exploded ? selected ? 1 : 0.12 : 0
+            : selected ? 1 : 0.12;
+        opacity[name] += (target - opacity[name]) * smoothing;
+        parts[name].materials.forEach((surface) => {
+          surface.opacity = opacity[name];
+          surface.depthWrite = opacity[name] > 0.95;
+        });
+        parts[name].group.visible = opacity[name] > 0.02;
+        parts[name].group.position.lerpVectors(assembled[name], exploded[name], opacity.exploded);
+      });
+
+      const distance = Math.max(9.5, 11.8 / camera.aspect);
+      const angle = -0.4 + scrollProgress * 0.8;
+      camera.position.set(Math.sin(angle) * distance, 3, Math.cos(angle) * distance);
+      camera.lookAt(0, 2.5, 0);
+
+      if (slide.focus?.length && slide.focus.length === 1 && slide.eyebrow !== 'Voice') {
+        parts[slide.focus[0] as PartName].group.getWorldPosition(projected);
+        projected.y += 0.55;
+        projected.project(camera);
+        label.textContent = slide.title;
+        label.style.opacity = '1';
+        label.style.transform = `translate(${(projected.x * 0.5 + 0.5) * view.clientWidth - label.offsetWidth / 2}px,${(-projected.y * 0.5 + 0.5) * view.clientHeight}px)`;
+      } else if (slide.eyebrow === 'Voice') {
+        parts.mic.group.getWorldPosition(projected);
+        projected.y += 0.55;
+        projected.project(camera);
+        label.textContent = slide.title;
+        label.style.opacity = '1';
+        label.style.transform = `translate(${(projected.x * 0.5 + 0.5) * view.clientWidth - label.offsetWidth / 2}px,${(-projected.y * 0.5 + 0.5) * view.clientHeight}px)`;
+      } else {
+        label.style.opacity = '0';
+      }
+      renderer.render(scene, camera);
+    };
+
+    const trigger = ScrollTrigger.create({
+      trigger: walkthrough,
+      start: 'top top+=68',
+      end: `+=${slides.length * 60}%`,
+      pin: walkthrough.querySelector<HTMLElement>('.kiosk-pin'),
+      anticipatePin: 1,
+      invalidateOnRefresh: true,
+      onUpdate: (self) => {
+        scrollProgress = self.progress;
+        const index = Math.min(slides.length - 1, Math.floor(self.progress * slides.length));
+        showSlide(index);
+      },
+    });
+    gsap.ticker.add(update);
+    walkthrough.setAttribute('data-kiosk-ready', 'true');
+
+    const cleanup = () => {
+      gsap.ticker.remove(update);
+      trigger.kill();
+      resizeObserver.disconnect();
+      renderer.dispose();
+      screenTexture.dispose();
+      scene.traverse((object) => {
+        if (object instanceof THREE.Mesh) object.geometry.dispose();
+      });
+      Object.values(parts).forEach(({ materials }) => materials.forEach((surface) => surface.dispose()));
+    };
+    document.addEventListener('astro:before-swap', cleanup, { once: true });
+  });
+</script>

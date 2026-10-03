@@ -2,11 +2,11 @@
 import '../styles/global.css';
 
 interface Props { title: string; description?: string }
-const { title, description = 'SAHAKAR AI is a voice-first kiosk that helps PACS members get scheme, KCC and legal information in their own language.' } = Astro.props;
+const { title, description = 'BHUTRANA is a voice-first kiosk that helps PACS members get scheme, KCC and legal information in their own language.' } = Astro.props;
 const path = Astro.url.pathname;
-const nav = [{ href: '/', label: 'Home' }, { href: '/about/', label: 'About us' }, { href: '/blog/', label: 'Blog' }];
+const nav = [{ href: '/', label: 'Home' }, { href: '/technical/', label: 'Technical' }, { href: '/about/', label: 'Meet the team' }, { href: '/blog/', label: 'Blog' }];
 const active = (href: string) => href === '/' ? path === '/' : path.startsWith(href);
-const fullTitle = title === 'SAHAKAR AI' ? title : `${title} | SAHAKAR AI`;
+const fullTitle = title === 'BHUTRANA' ? title : `${title} | BHUTRANA`;
 const canonical = new URL(path, Astro.site);
 ---
 <!doctype html>
@@ -30,7 +30,7 @@ const canonical = new URL(path, Astro.site);
     <a class="skip" href="#main">Skip to content</a>
     <header class="site-header">
       <div class="wrap bar">
-        <a class="brand" href="/">SAHAKAR AI</a>
+        <a class="brand" href="/">BHUTRANA</a>
         <nav aria-label="Main navigation">
           {nav.map((item) => <a href={item.href} aria-current={active(item.href) ? 'page' : undefined}>{item.label}</a>)}
         </nav>

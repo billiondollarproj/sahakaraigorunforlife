@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import KioskModel from '../components/KioskModel.astro';
+---
+<Base title="Technical overview" description="Explore BHUTRANA's planned kiosk hardware and software architecture.">
+  <div class="wrap page-head">
+    <p class="meta"><span class="tag">Technical overview</span>BHUTRANA</p>
+    <h1>See inside the kiosk.</h1>
+    <p class="lead">Scroll to open it up. Each planned part is highlighted in turn, with its purpose and the technology behind it. The prototype is being built on a laptop first, then Raspberry Pi hardware.</p>
+  </div>
+  <KioskModel />
+  <section class="section"><div class="wrap technical-stack"><h2>The software stack</h2><p class="intro">Planned technical layers for the prototype.</p><div class="table-scroll"><table>
+    <thead><tr><th scope="col">Layer</th><th scope="col">Tool</th><th scope="col">What it does</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Voice</th><td>Bhashini</td><td>Speech to text and back, with Hindi, Tamil and English as first demo languages.</td></tr>
+      <tr><th scope="row">Backend</th><td>Python, Flask</td><td>Connects the screen, voice, reader and printer.</td></tr>
+      <tr><th scope="row">Knowledge</th><td>Local retrieval database</td><td>Finds answers in bylaws, KCC rules and scheme guidelines.</td></tr>
+      <tr><th scope="row">Offline</th><td>SQLite cache</td><td>Supports the planned offline fallback and synchronization.</td></tr>
+      <tr><th scope="row">Identity</th><td>NFC / RFID, PACS ID</td><td>Provides a card tap or PACS ID lookup.</td></tr>
+      <tr><th scope="row">Output</th><td>Thermal printer</td><td>Prints an application ID and QR code.</td></tr>
+    </tbody>
+  </table></div></div></section>
+</Base>

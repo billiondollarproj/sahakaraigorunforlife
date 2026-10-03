@@ -1,6 +1,6 @@
 ---
 title: "The hardware: kiosk, identity tap and receipt printer"
-summary: "What is inside the SAHAKAR AI kiosk and why each part is there."
+summary: "What is planned for the BHUTRANA kiosk and why each part is there."
 part: "3.1"
 order: 4
 tag: "Hardware"
